@@ -1,0 +1,12 @@
+
+@if (licensePlates$ | async) {
+    <p-listbox 
+        [options]="listLicensePlates" 
+        [(ngModel)]="selectedLicensePlates" 
+        optionLabel="plateNumber"
+        optionValue="plateNumber"
+        filter="true"
+        [style]="{'width':'15rem'}" 
+        [listStyle]="{'max-height': '220px'}" />
+} 
+    
