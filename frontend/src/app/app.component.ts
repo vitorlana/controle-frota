@@ -4,7 +4,6 @@ import { RouterLink, RouterOutlet } from '@angular/router';
 import { FilterMatchMode, PrimeNGConfig } from 'primeng/api';
 import { ListLicensePlatesComponent } from "./license-plates/components/list-license-plates/list-license-plates.component";
 import { BrowserModule } from '@angular/platform-browser';
-import { ListPointsOfInterestComponent } from "./points-of-interest/components/list-points-of-interest/list-points-of-interest.component";
 import { NgOptimizedImage } from '@angular/common';
 import {StyleClassModule} from 'primeng/styleclass';
 import { BodyComponent } from './shared/components/body/body.component';
@@ -16,7 +15,6 @@ import { HomeComponent } from './core/home/home.component';
   standalone: true,
   imports: [
     ListLicensePlatesComponent,
-    ListPointsOfInterestComponent, 
     RouterLink, 
     RouterOutlet,
     StyleClassModule,

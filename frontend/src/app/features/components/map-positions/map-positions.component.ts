@@ -1,35 +1,28 @@
-import { Component, DestroyRef, OnInit, AfterViewInit, Output, EventEmitter } from '@angular/core';
+import { Component, DestroyRef, OnInit, AfterViewInit, OnDestroy, Output, EventEmitter, ViewChild, ElementRef } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import * as L from 'leaflet';
 import { combineLatest } from 'rxjs';
 import { PointOfInterestService } from '../../../points-of-interest/points-of-interest.service';
 import { PointOfInterest } from '../../../shared/model/point-of-interest.model';
 import { VehiclePosition } from '../../../shared/model/vehicle-position.model';
-import { VehiclePositionService } from '../../../vehicle-position/vehicle-postion.service';
+import { VehiclePositionService } from '../../../vehicle-position/vehicle-position.service';
+import { PoiTimeResult } from '../../../shared/model/poi-time-result.model';
 
 L.Icon.Default.imagePath = 'assets/leaflet/';
-
-interface PoiTimeResult {
-  poiId: number;
-  poiNome: string;
-  vehicles: {
-    placa: string;
-    tempoTotal: number; // em minutos
-  }[];
-}
 
 @Component({
   selector: 'app-map-positions',
   standalone: true,
-  template: '<div id="map"></div>',
-  styles: 'div { height: 50vh; width: 50vw; }'
+  template: '<div #mapContainer id="map"></div>',
+  styles: '#map { height: 50vh; width: 50vw; }'
 })
-export class MapPositionsComponent implements OnInit, AfterViewInit {
+export class MapPositionsComponent implements OnInit, AfterViewInit, OnDestroy {
+  @ViewChild('mapContainer') mapContainer!: ElementRef;
   @Output() poiTimeResults = new EventEmitter<PoiTimeResult[]>();
 
-  private map!: L.Map;
+  private map: L.Map | null = null;
   private poiMarkers: L.Circle[] = [];
-  private vehicleRoute!: L.Polyline;
+  private vehicleRoute: L.Polyline | null = null;
   private vehicleMarkers: L.Marker[] = [];
 
   private pointsOfInterest: PointOfInterest[] = [];
@@ -55,16 +48,47 @@ export class MapPositionsComponent implements OnInit, AfterViewInit {
   }
 
   ngAfterViewInit() {
-    this.initializeMap();
+    try {
+      this.initializeMap();
+    } catch (error) {
+      console.error('Error initializing map:', error);
+    }
+  }
+
+  ngOnDestroy() {
+    if (this.map) {
+      this.map.remove();
+      this.map = null;
+    }
   }
 
   private initializeMap() {
-    const baseMapURl = 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'
-    this.map = L.map('map');
-    L.tileLayer(baseMapURl).addTo(this.map);
+    if (this.map) {
+      console.warn('Map already initialized');
+      return;
+    }
+
+    const container = this.mapContainer.nativeElement;
+    if (!container) {
+      console.error('Map container not found');
+      return;
+    }
+
+    try {
+      const baseMapURl = 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
+      this.map = L.map(container).setView([0, 0], 2); // Set a default view
+      L.tileLayer(baseMapURl).addTo(this.map);
+      console.log('Map initialized successfully');
+    } catch (error) {
+      console.error('Error creating map:', error);
+    }
   }
 
   private updateMap() {
+    if (!this.map) {
+      console.warn('Map not initialized, cannot update');
+      return;
+    }
     this.clearMap();
     this.createPoiMarkers();
     this.createVehicleRoute();
@@ -82,7 +106,9 @@ export class MapPositionsComponent implements OnInit, AfterViewInit {
     this.vehicleMarkers.forEach(marker => marker.remove());
     this.poiMarkers = [];
     this.vehicleMarkers = [];
+    this.vehicleRoute = null;
   }
+
 
   private createPoiMarkers() {
     this.poiMarkers = this.pointsOfInterest.map(poi => 
@@ -113,12 +139,29 @@ export class MapPositionsComponent implements OnInit, AfterViewInit {
   }
 
   private addMarkersAndRoute() {
-    this.poiMarkers.forEach(marker => marker.addTo(this.map));
-    this.vehicleRoute.addTo(this.map);
-    this.vehicleMarkers.forEach(marker => marker.addTo(this.map));
+    if (!this.map) {
+      console.error('Map is not initialized in addMarkersAndRoute');
+      return;
+    }
+  
+    try {
+      this.poiMarkers.forEach(marker => marker.addTo(this.map!));
+      
+      if (this.vehicleRoute) {
+        this.vehicleRoute.addTo(this.map);
+      } else {
+        console.warn('Vehicle route is not initialized');
+      }
+      
+      this.vehicleMarkers.forEach(marker => marker.addTo(this.map!));
+      
+      console.log('Markers and route added successfully');
+    } catch (error) {
+      console.error('Error adding markers and route:', error);
+    }
   }
-
   private centerMap() {
+    if (!this.map) return;
     const allPoints = [
       ...this.poiMarkers.map(marker => marker.getLatLng()),
       ...this.vehicleMarkers.map(marker => marker.getLatLng())

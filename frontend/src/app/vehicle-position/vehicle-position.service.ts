@@ -6,6 +6,7 @@ import { VehiclePosition } from '../shared/model/vehicle-position.model';
 @Injectable({
   providedIn: 'root'
 })
+
 export class VehiclePositionService {
   private VehiclePositionsSubject = new BehaviorSubject<VehiclePosition[]>([]);
 

@@ -15,7 +15,7 @@ import { DetailsPoiComponent } from "../../../features/components/details-poi/de
 import { MapPositionsComponent } from "../../../features/components/map-positions/map-positions.component";
 import { TableDataVehicleComponent } from "../../../features/components/table-data-vehicle/table-data-vehicle.component";
 import { PlateSelectorComponent } from "../../../features/components/plate-selector/plate-selector.component";
-import { MapComponent } from "../../map/map.component";
+import { SomeComponent } from '../teste.component';
 
 @Component({
   selector: 'app-body',
@@ -38,7 +38,7 @@ import { MapComponent } from "../../map/map.component";
     MapPositionsComponent,
     TableDataVehicleComponent,
     PlateSelectorComponent,
-    MapComponent
+    SomeComponent
 ]
 })
 export class BodyComponent {
