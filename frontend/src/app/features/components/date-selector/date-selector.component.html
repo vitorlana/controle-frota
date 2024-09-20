@@ -1,4 +1,4 @@
- <p-card header="Date Selector" class="">
+ <p-card>
     <div id="data-selector" class="date-selector " >
       <div class="text-gray-400 font-medium justify-content-start mb-3">Select Date</div>
       <p-calendar 
@@ -10,4 +10,7 @@
         (onSelect)="onDateSelect()">
       </p-calendar>
     </div>
+  </p-card> 
+  <p-card header="Actions" class=" align-content-center">
+    <p-button class="flex" label="Resetar Data" icon="pi pi-times" (onClick)="resetDate()"></p-button>
   </p-card>

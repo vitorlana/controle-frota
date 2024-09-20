@@ -2,11 +2,13 @@ import { Component, DestroyRef, OnInit, AfterViewInit, OnDestroy, Output, EventE
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import * as L from 'leaflet';
 import { combineLatest } from 'rxjs';
-import { PointOfInterestService } from '../../../points-of-interest/points-of-interest.service';
 import { PointOfInterest } from '../../../shared/model/point-of-interest.model';
 import { VehiclePosition } from '../../../shared/model/vehicle-position.model';
-import { VehiclePositionService } from '../../../vehicle-position/vehicle-position.service';
+import { VehiclePositionService } from '../../../core/services/vehicle-position/vehicle-position.service';
 import { PoiTimeResult } from '../../../shared/model/poi-time-result.model';
+import { PointOfInterestService } from '../../../core/services/points-of-interest/points-of-interest.service';
+import { DatePipe } from '@angular/common';
+import { FilterStateService } from '../../../core/services/filter/filter.service';
 
 L.Icon.Default.imagePath = 'assets/leaflet/';
 
@@ -14,7 +16,7 @@ L.Icon.Default.imagePath = 'assets/leaflet/';
   selector: 'app-map-positions',
   standalone: true,
   template: '<div #mapContainer id="map"></div>',
-  styles: '#map { height: 50vh; width: 50vw; }'
+  styles: '#map { height: calc(0.80*100vh); width: 50vw; }',
 })
 export class MapPositionsComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild('mapContainer') mapContainer!: ElementRef;
@@ -26,24 +28,40 @@ export class MapPositionsComponent implements OnInit, AfterViewInit, OnDestroy {
   private vehicleMarkers: L.Marker[] = [];
 
   private pointsOfInterest: PointOfInterest[] = [];
-  private VehiclePositions: VehiclePosition[] = [];
+  private vehiclePositions: VehiclePosition[] = [];
 
   constructor(
     private poiService: PointOfInterestService,
     private vehicleService: VehiclePositionService,
+    private filterStateService: FilterStateService,
     private destroyRef: DestroyRef
   ) {}
 
   ngOnInit() {
     combineLatest([
       this.poiService.getPointsOfInterest(),
-      this.vehicleService.getVehiclePositions()
+      this.vehicleService.getVehiclePositions(),
+      this.filterStateService.selectedDate$,
+      this.filterStateService.selectedPlates$
     ]).pipe(
       takeUntilDestroyed(this.destroyRef)
-    ).subscribe(([pois, VehiclePositions]) => {
+    ).subscribe(([pois, vehiclePositions, selectedDate, selectedPlates]) => {
       this.pointsOfInterest = pois;
-      this.VehiclePositions = VehiclePositions;
+      this.vehiclePositions = this.filterVehiclePositions(vehiclePositions, selectedDate, selectedPlates);
       this.updateMap();
+    });
+  }
+
+  private filterVehiclePositions(positions: VehiclePosition[], selectedDate: Date | null, selectedPlates: string[]): VehiclePosition[] {
+    return positions.filter(position => {
+      const positionDate = new Date(position.data);
+      const dateMatches = !selectedDate || (
+        positionDate.getFullYear() === selectedDate.getFullYear() &&
+        positionDate.getMonth() === selectedDate.getMonth() &&
+        positionDate.getDate() === selectedDate.getDate()
+      );
+      const plateMatches = selectedPlates.length === 0 || selectedPlates.includes(position.placa);
+      return dateMatches && plateMatches;
     });
   }
 
@@ -122,16 +140,16 @@ export class MapPositionsComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   private createVehicleRoute() {
-    const routePoints = this.VehiclePositions.map(point => [point.latitude, point.longitude] as L.LatLngExpression);
+    const routePoints = this.vehiclePositions.map(point => [point.latitude, point.longitude] as L.LatLngExpression);
     this.vehicleRoute = L.polyline(routePoints, { color: 'blue', weight: 3 });
   }
 
   private createVehicleMarkers() {
-    this.vehicleMarkers = this.VehiclePositions.map(point => 
-      L.marker([point.latitude, point.longitude])
+    this.vehicleMarkers = this.vehiclePositions.map(point => 
+      L.marker([point.latitude, point.longitude], {} )
         .bindPopup(`
           Placa: ${point.placa}<br>
-          Data: ${point.data.toLocaleString()}<br>
+          Data: ${ point.data}<br>
           Velocidade: ${point.velocidade} km/h<br>
           Ignição: ${point.ignicao ? 'Ligada' : 'Desligada'}
         `)
@@ -191,15 +209,15 @@ export class MapPositionsComponent implements OnInit, AfterViewInit, OnDestroy {
           const isInPoi = this.isPointInPoi(point, poi);
           
           if (isInPoi && !lastEntryTime) {
-            lastEntryTime = point.data;
+            lastEntryTime = new Date(point.data);
           } else if (!isInPoi && lastEntryTime) {
-            timeInPoi += (point.data.getTime() - lastEntryTime.getTime()) / 60000; // Convert to minutes
+            timeInPoi += (new Date(point.data).getTime() - lastEntryTime.getTime()) / 60000; // Convert to minutes
             lastEntryTime = null;
           }
 
           // Check if it's the last point and still in POI
           if (i === points.length - 1 && lastEntryTime) {
-            timeInPoi += (point.data.getTime() - lastEntryTime.getTime()) / 60000;
+            timeInPoi += (new Date(point.data).getTime() - lastEntryTime.getTime()) / 60000;
           }
         });
 
@@ -216,7 +234,7 @@ export class MapPositionsComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   private groupVehiclePositionByPlaca(): Map<string, VehiclePosition[]> {
-    return this.VehiclePositions.reduce((map, point) => {
+    return this.vehiclePositions.reduce((map, point) => {
       const group = map.get(point.placa) || [];
       group.push(point);
       map.set(point.placa, group);

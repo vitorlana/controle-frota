@@ -5,8 +5,9 @@ import { AccordionModule } from 'primeng/accordion';
 import { ListboxModule } from 'primeng/listbox';
 import { Observable } from 'rxjs';
 import { LicensePlate } from '../../../shared/model/license-plate.model';
-import { LicensePlatesService } from '../../../license-plates/license-plates.service';
 import { CardModule } from 'primeng/card';
+import { LicensePlatesService } from '../../../core/services/license-plates/license-plates.service';
+import { FilterStateService } from '../../../core/services/filter/filter.service';
 
 @Component({
   selector: 'app-plate-selector',
@@ -20,7 +21,10 @@ export class PlateSelectorComponent implements OnInit {
   filteredPlates: LicensePlate[] = [];
   selectedPlates: LicensePlate[] = [];
 
-  constructor(private licensePlatesService: LicensePlatesService) {}
+  constructor(
+    private licensePlatesService: LicensePlatesService,
+    private filterStateService: FilterStateService
+  ) {}
 
   ngOnInit() {
     this.loadPlates();
@@ -36,6 +40,6 @@ export class PlateSelectorComponent implements OnInit {
 
   onPlateSelect(event: any) {
     console.log('Selected plates:', this.selectedPlates);
-    // Here you can add any additional logic needed when plates are selected
+    this.filterStateService.setSelectedPlates(this.selectedPlates.map(plate => plate.plateNumber));
   }
 }

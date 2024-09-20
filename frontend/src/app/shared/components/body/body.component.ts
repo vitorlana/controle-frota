@@ -11,11 +11,10 @@ import { InputNumberModule } from 'primeng/inputnumber';
 import { InputTextModule } from 'primeng/inputtext';
 import { SliderModule } from 'primeng/slider';
 import { DateSelectorComponent } from "../../../features/components/date-selector/date-selector.component";
-import { DetailsPoiComponent } from "../../../features/components/details-poi/details-poi.component";
 import { MapPositionsComponent } from "../../../features/components/map-positions/map-positions.component";
 import { TableDataVehicleComponent } from "../../../features/components/table-data-vehicle/table-data-vehicle.component";
 import { PlateSelectorComponent } from "../../../features/components/plate-selector/plate-selector.component";
-import { SomeComponent } from '../teste.component';
+import { SomeComponent } from '../../../features/components/teste.component';
 
 @Component({
   selector: 'app-body',
@@ -34,7 +33,6 @@ import { SomeComponent } from '../teste.component';
     InputTextModule,
     SliderModule,
     DateSelectorComponent,
-    DetailsPoiComponent,
     MapPositionsComponent,
     TableDataVehicleComponent,
     PlateSelectorComponent,
@@ -42,7 +40,6 @@ import { SomeComponent } from '../teste.component';
 ]
 })
 export class BodyComponent {
-  selectedBrand_1: string[] = [];
   rangeValues: number[] = [10, 10000];
   selectedColors: string[] = [];
   selectedSizes1: string[] = [];

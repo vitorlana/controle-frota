@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { AccordionModule } from 'primeng/accordion';
 import { CalendarModule } from 'primeng/calendar';
 import { CardModule } from 'primeng/card';
+import { FilterStateService } from '../../../core/services/filter/filter.service';
 
 @Component({
   selector: 'app-date-selector',
@@ -15,8 +16,16 @@ import { CardModule } from 'primeng/card';
 export class DateSelectorComponent {
   selectedDate: Date | undefined;
 
+  constructor(private filterStateService: FilterStateService) {}
+
   onDateSelect() {
     console.log('Selected date:', this.selectedDate);
-    // Aqui você pode adicionar a lógica para fazer a requisição HTTP com a data selecionada
+    this.filterStateService.setSelectedDate(this.selectedDate || null);
+  }
+
+  resetDate() {
+    this.selectedDate = undefined;
+    this.filterStateService.setSelectedDate(null);
+    console.log('Date reset');
   }
 }

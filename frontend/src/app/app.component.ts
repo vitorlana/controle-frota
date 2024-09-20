@@ -2,7 +2,6 @@ import { Component, OnInit } from '@angular/core';
 import { BrowserAnimationsModule, NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { RouterLink, RouterOutlet } from '@angular/router';
 import { FilterMatchMode, PrimeNGConfig } from 'primeng/api';
-import { ListLicensePlatesComponent } from "./license-plates/components/list-license-plates/list-license-plates.component";
 import { BrowserModule } from '@angular/platform-browser';
 import { NgOptimizedImage } from '@angular/common';
 import {StyleClassModule} from 'primeng/styleclass';
@@ -14,7 +13,6 @@ import { HomeComponent } from './core/home/home.component';
   selector: 'app-root',
   standalone: true,
   imports: [
-    ListLicensePlatesComponent,
     RouterLink, 
     RouterOutlet,
     StyleClassModule,
