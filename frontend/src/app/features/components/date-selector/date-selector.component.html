@@ -1,0 +1,13 @@
+ <p-card header="Date Selector" class="">
+    <div id="data-selector" class="date-selector " >
+      <div class="text-gray-400 font-medium justify-content-start mb-3">Select Date</div>
+      <p-calendar 
+        [(ngModel)]="selectedDate" 
+        dateFormat="dd/mm/yy" 
+        [showIcon]="true"
+        [style]="{'width': '100%'}" 
+        [inputStyleClass]="'bg-transparent text-gray-400 border-gray-400'"
+        (onSelect)="onDateSelect()">
+      </p-calendar>
+    </div>
+  </p-card>

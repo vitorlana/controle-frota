@@ -15,8 +15,8 @@ export class LicensePlatesService {
     private http: HttpClient
   ) { }
 
-  getLicensePlates(): Observable<String[]> {
-    return this.http.get<String[]>(`${this.constants.API_ENDPOINT_BASE}${this.constants.API_ENDPOINT_LICENSE_PLATE}`);
+  getLicensePlates(): Observable<string[]> {
+    return this.http.get<string[]>(`${this.constants.API_ENDPOINT_BASE}${this.constants.API_ENDPOINT_LICENSE_PLATE}`);
   }
 
 }

@@ -1,0 +1,25 @@
+
+  <p-card header="Vehicle Plate Selector" >
+    <p-listbox
+    checkbox="true"
+    showToggleAll="false"
+    [options]="filteredPlates"
+    [(ngModel)]="selectedPlates"
+    [multiple]="true"
+    optionLabel="plateNumber"
+    [filter]="true"
+    [style]="{ width: '100%' }"
+    [listStyle]="{'max-height': '220px'}"
+    (onChange)="onPlateSelect($event)"
+  >
+    <ng-template let-plate pTemplate="item">
+      <div class="flex align-items-center gap-2">
+        <span>{{ plate.plateNumber }}</span>
+      </div>
+    </ng-template>
+  </p-listbox>
+
+  <div *ngIf="filteredPlates.length === 0" class="text-center text-gray-500 mt-3">
+    No plates found
+  </div>
+  </p-card>

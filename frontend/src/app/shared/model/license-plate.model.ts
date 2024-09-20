@@ -1,8 +1,8 @@
 export class LicensePlate {
 
-    plateNumber: String;
+    plateNumber: string;
 
-    constructor(plateNumber: String) {
+    constructor(plateNumber: string) {
         this.plateNumber = plateNumber;
     }
 

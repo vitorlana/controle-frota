@@ -1,15 +1,15 @@
-
+<!-- 
 @if (pointsOfInterest$ | async) {
  
         <div class="card" >
-            <p-table [scrollable]="true" scrollHeight="calc(0.8*100vh)" [value]="listPointsOfInterest" dataKey="id" [tableStyle]="{ 'min-width': '60rem'}" [expandedRowKeys]="expandedRows">
+            <p-table [scrollable]="true" class="-1" scrollHeight="calc(0.84*100vh)" [value]="listPointsOfInterest" dataKey="id" [tableStyle]="{ 'min-width': '60rem'}" [expandedRowKeys]="expandedRows">
                 <ng-template pTemplate="header">
                     <tr>
                         <th style="width: 5rem"></th>
                         <th pSortableColumn="id">Id <p-sortIcon field="id" /></th>
                         <th pSortableColumn="nome">Name <p-sortIcon field="nome" /></th>
                     </tr>
-                </ng-template>
+                </ng-template>a
                 <ng-template pTemplate="body" let-pointOfInterest let-expanded="expanded">
                     <tr>
                         <td>
@@ -33,4 +33,4 @@
 
 
 } 
-    
+     -->

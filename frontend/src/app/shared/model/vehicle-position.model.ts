@@ -1,7 +1,7 @@
 export class VehiclePosition {
 
     id: number;
-    placa: String;
+    placa: string;
     data: Date;
     velocidade: number;
     latitude: number;
@@ -9,7 +9,7 @@ export class VehiclePosition {
     ignicao: Boolean;
 
     
-    constructor(id: number, placa: String, data: Date, velocidade: number, latitude: number, longitude: number, ignicao: Boolean) {
+    constructor(id: number, placa: string, data: Date, velocidade: number, latitude: number, longitude: number, ignicao: Boolean) {
     
         this.id = id;
         this.placa = placa;

@@ -16,7 +16,7 @@ import { AsyncPipe } from '@angular/common';
 
 export class ListLicensePlatesComponent {
 
-  licensePlates$!: Observable<String[]>;
+  licensePlates$!: Observable<string[]>;
   listLicensePlates : LicensePlate[] = [];
   selectedLicensePlates!: LicensePlate[];
 
